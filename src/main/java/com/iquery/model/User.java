@@ -36,9 +36,37 @@ public class User {
     @NotEmpty(message = "Please provide your branch")
     private String branch;
 
-    @Column(name = "roll_no", unique = true)
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
+    }
+
+    @Column(name = "role")
+    @NotEmpty(message = "Please provide your role")
+    private String role;
+
+    @Column(name = "roll_no",unique = true)
     @NotEmpty(message = "Please provide your rollNo")
     private String rollNo;
+
+    @Column(name = "user_name",unique = true)
+    @NotEmpty(message = "Please provide your user name")
+    private String username;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
 
     public String getRollNo() {
         return rollNo;
