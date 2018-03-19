@@ -7,6 +7,7 @@ import com.nulabinc.zxcvbn.Strength;
 import com.nulabinc.zxcvbn.Zxcvbn;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -21,15 +22,18 @@ import java.util.UUID;
 @Controller
 public class RegisterController {
 
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
     private UserService userService;
     private EmailService emailService;
 
     @Autowired
-    public RegisterController(UserService userService, EmailService emailService) {
+    public RegisterController(BCryptPasswordEncoder bCryptPasswordEncoder, UserService userService, EmailService emailService) {
 
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.userService = userService;
         this.emailService = emailService;
     }
+
 
     // Return registration form template
     @RequestMapping(value = "/register", method = RequestMethod.GET)
@@ -62,10 +66,10 @@ public class RegisterController {
             bindingResult.reject("email");
         }
 
-        if (userService.findByRollNo(user.getRollNo()) != null) {
-            modelAndView.addObject("alreadyRollNoMessage", "Oops!  There is already a user registered with the roll no provided.");
+        if (userService.findByUsername(user.getUsername()) != null) {
+            modelAndView.addObject("alreadyUNameMessage", "Oops!  There is already a user registered with the user name provided.");
             modelAndView.setViewName("register");
-            bindingResult.reject("rollNo");
+            bindingResult.reject("username");
 
         }
 
@@ -139,7 +143,7 @@ public class RegisterController {
         User user = userService.findByConfirmationToken(requestParams.get("token").toString());
 
         // Set new password
-        user.setPassword((requestParams.get("password").toString()));
+        user.setPassword(bCryptPasswordEncoder.encode(requestParams.get("password").toString()));
 
         // Set user to enabled
         user.setEnabled(true);
@@ -151,12 +155,6 @@ public class RegisterController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public ModelAndView processLogin(ModelAndView modelAndView, BindingResult bindingResult,User user, RedirectAttributes redir) {
-        System.out.println(user.getRollNo());
-        modelAndView.setViewName("home");
-        return modelAndView;
-    }
 
 
 }

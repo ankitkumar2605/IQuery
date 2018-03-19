@@ -48,10 +48,6 @@ public class User {
     @NotEmpty(message = "Please provide your role")
     private String role;
 
-    @Column(name = "roll_no",unique = true)
-    @NotEmpty(message = "Please provide your rollNo")
-    private String rollNo;
-
     @Column(name = "user_name",unique = true)
     @NotEmpty(message = "Please provide your user name")
     private String username;
@@ -66,14 +62,6 @@ public class User {
 
     public boolean isEnabled() {
         return enabled;
-    }
-
-    public String getRollNo() {
-        return rollNo;
-    }
-
-    public void setRollNo(String rollNo) {
-        this.rollNo = rollNo;
     }
 
     public String getBranch() {

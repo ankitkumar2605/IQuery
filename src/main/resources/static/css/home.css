@@ -1,0 +1,84 @@
+.ulcustom {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    width: 14%;
+    position: fixed;
+    height: 100%;
+    overflow: auto;
+}
+
+.acustom,.pcustom {
+    display: block;
+    color: white;
+    padding: 12px 12px;
+    text-decoration: none;
+}
+
+.aside {
+    display: block;
+    color: black;
+    padding: 12px 12px;
+    text-decoration: none;
+}
+
+a.active {
+    background-color: grey;
+    color: white;
+}
+
+
+.acustom:hover:not(.active) {
+    background-color: #555;
+    color: white;
+}
+
+.pcustom{
+    border-bottom: 1px solid white;
+}
+
+.cardcustom{
+    margin: 0;
+    padding: 0;
+}
+
+.like-dislike{
+    display: inline-block;
+}
+
+.writer{
+    margin-right: 650px;
+}
+
+.answer{
+    border:1px solid #999999;
+    color:#6f6f6f;
+    width:50%;
+    margin-left: 200px;
+    position: relative;
+    display: inline-block;
+    height: 200px;
+    text-align: left;
+}
+.w3-light-grey, .w3-hover-light-grey:hover, .w3-light-gray, .w3-hover-light-gray:hover{
+color: #000!important;
+background-color: #f1f1f1!important;
+}
+
+.fab {
+    width: 70px;
+    height: 70px;
+    background-color: red;
+    border-radius: 50%;
+    box-shadow: 0 6px 10px 0 #666;
+    transition: all 0.1s ease-in-out;
+
+    font-size: 50px;
+    color: white;
+    text-align: center;
+    line-height: 70px;
+
+    position: fixed;
+    right: 50px;
+    bottom: 100px;
+}
