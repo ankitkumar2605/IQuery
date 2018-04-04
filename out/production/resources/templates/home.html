@@ -1,11 +1,204 @@
 <!DOCTYPE html>
-<html lang="en">
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Title</title>
+    <title>IQuery</title>
+
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"/>
+    <link th:href="@{css/home.css}" rel="stylesheet"/>
+
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
 </head>
-<body>
-<p>Welcome
-</p>
+<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
+    <!-- Brand/logo -->
+    <a class="navbar-brand" href="/home">IQuery</a>
+
+    <!-- Links -->
+    <ul class="navbar-nav">
+
+        <li class="nav-item">
+            <a class="nav-link active" href="/home">
+                <i class="fa fa-edit"></i>
+                Read <span class="sr-only">(current)</span></a>
+        </li>
+        <li class="nav-item" style="margin-left: 20px">
+            <a class="nav-link" href="/answer">
+                <i class="fa fa-pencil"></i>
+                Answer</a>
+        </li>
+        <li class="nav-item" style="margin-left: 20px">
+            <a class="nav-link" href="/profile">
+                <i class="fa fa-user"></i>
+                Profile</a>
+        </li>
+
+    </ul>
+    <button type="button" id="newQuestion" style="margin-left: 20px" class="btn btn-danger navbar-btn"
+            data-toggle="modal" data-target="#questionModal">New Question
+    </button>
+    <div class="collapse navbar-collapse justify-content-end" id="navbarCollapse">
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" th:href="@{/app-logout}">Sign Out</a>
+            </li>
+        </ul>
+    </div>
+
+</nav>
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-2">
+            <ul class="navbar-dark bg-dark ulcustom w3-light-grey">
+
+                <li><a class="active aside" href="/home">Top Stories</a></li>
+                <li><a class="aside" href="/newQuestion">New Questions</a></li>
+            </ul>
+        </div>
+        <div class="col-sm-10">
+
+            <th:block th:each="question : ${questions}">
+                <div class="card" style="margin-top: 20px">
+                    <h5 class="card-header" th:text="${question.value}"></h5>
+                    <div class="card-body">
+                        <div class="row" style="margin-top: 10px">
+                            <div class="col-sm-1">
+                                <img alt="User Pic"
+                                     onerror="this.src='/images/defaultImage.jpg'"
+                                     th:src="@{'/images/' + ${question.user.profileImage}}"
+                                     class="img-circle img-responsive ans-profile-image">
+                            </div>
+                            <div class="col-sm-11">
+                                <div>
+                                    <p th:text="${question.user.username}"></p>
+                                </div>
+                                <div style="margin-top: -10px">
+                                    <p th:text="'Branch: '+${question.user.branch}"></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <a class="nav-link answer_count_prominent" th:href="@{/showAnswers(id=${question.id})}"
+                               style="margin-left: -12px;"><span
+                                    th:text="${question.noOfAnswers}+' Answers'"></span></a>
+                        </div>
+                        <button type="button" class="btn likebutton" th:attr="data-questionId=${question.id}"
+                                th:classappend="${question.isLike()} ? btn-secondary : btn-info"
+                                style="margin-right: 10px"
+                                th:text="'Like | '+${question.noOfLikes}">
+                        </button>
+                        <button type="button" class="btn btn-primary" style="margin-right: 10px"
+                                data-toggle="modal" data-target="#answerModal" th:attr="data-answer=${question.id}"
+                                th:text="${question.isAns()} ? 'Edit Answer':'Answer'">
+                        </button>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="questionModal" tabindex="-1" role="dialog" aria-labelledby="questionModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="questionModalLabel">Question</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="questionForm" role="form" action="#" th:action="@{/saveQuestion}" method="post">
+                    <div class="form-group">
+                        <input type="text" name="value"
+                               placeholder="Put Your Question" class="form-control" required/>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="answerModal" tabindex="-1" role="dialog" aria-labelledby="answerModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Answer This Question</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="ansForm" role="form" action="#" th:action="@{/saveAnswer}" method="post">
+
+                    <input type="hidden" name="questionId">
+                    <input type="hidden" name="callingScreen" value="home">
+
+                    <div class="form-group">
+                        <label for="message-text" class="col-form-label">Answer:</label>
+                        <textarea class="form-control" name="answer" id="message-text"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:inline="javascript">
+
+    $(document).ready(function () {
+
+        $('#answerModal').on('show.bs.modal', function (event) {
+            var button = $(event.relatedTarget);
+            var questionId = button.data('answer');
+            var modal = $(this);
+            modal.find(".modal-body input[name='questionId']").val(questionId);
+
+        });
+
+        $('.likebutton').on('click', function () {
+            var button = $(this);
+            var questionId = $(this).data('questionid');
+            var likeUrl = "/addLike?questionId=" + questionId;
+
+            $.ajax({
+                url: likeUrl,
+                type: 'GET',
+                dataType: 'json',
+                success: function (result) {
+                    if (button.hasClass("btn-secondary")) {
+                        button.removeClass("btn-secondary");
+                        button.addClass("btn-info");
+                    } else {
+                        button.removeClass("btn-info");
+                        button.addClass("btn-secondary");
+                    }
+                    button.text("Like | " + result);
+                },
+                error: function (data, status, er) {
+                }
+            });
+        });
+    });
+</script>
 </body>
 </html>

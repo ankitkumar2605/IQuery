@@ -5,6 +5,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 import org.springframework.data.annotation.Transient;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "user")
@@ -24,17 +26,45 @@ public class User {
     @Transient
     private String password;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name",nullable = false)
     @NotEmpty(message = "Please provide your first name")
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name",nullable = false)
     @NotEmpty(message = "Please provide your last name")
     private String lastName;
 
-    @Column(name = "branch")
-    @NotEmpty(message = "Please provide your branch")
+    @Column(name = "profile_image")
+    private String profileImage;
+
+    @Column(name = "branch",nullable = false)
     private String branch;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Question> questions = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Answer> answers = new HashSet<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private Set<Like> likePost = new HashSet<>();
+
+    public Set<Answer> getAnswers() {
+        return answers;
+    }
+
+    public void setAnswers(Set<Answer> answers) {
+        this.answers = answers;
+    }
+
+    public Set<Question> getQuestions() {
+        return questions;
+    }
+
+    public void setQuestions(Set<Question> questions) {
+        this.questions = questions;
+    }
+
 
     public String getRole() {
         return role;
@@ -48,7 +78,7 @@ public class User {
     @NotEmpty(message = "Please provide your role")
     private String role;
 
-    @Column(name = "user_name",unique = true)
+    @Column(name = "user_name",nullable = false,unique = true)
     @NotEmpty(message = "Please provide your user name")
     private String username;
 
@@ -133,5 +163,21 @@ public class User {
 
     public void setEnabled(boolean value) {
         this.enabled = value;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public Set<Like> getLikePost() {
+        return likePost;
+    }
+
+    public void setLikePost(Set<Like> likePost) {
+        this.likePost = likePost;
     }
 }
